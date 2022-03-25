@@ -1,0 +1,51 @@
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: frontend
+#   labels:
+#     app: unpaper
+#     tier: frontend
+# spec:
+#   ports:
+#   - port: 443
+#     protocol: TCP
+#     name: https
+#   - port: 80 
+#     targetPort: 443
+#     protocol: TCP
+#     name: http
+#   selector:
+#     app: unpaper
+#     tier: frontend
+# ---
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: frontend
+# spec:
+#   selector:
+#     matchLabels:
+#       app: unpaper
+#       tier: frontend
+#   replicas: 1
+#   template:
+#     metadata:
+#       labels:
+#         app: unpaper
+#         tier: frontend
+#     spec:
+#       containers:
+#       - name: frontend
+#         image: frontend
+#         imagePullPolicy: IfNotPresent
+#         ports:
+#         - containerPort: 443
+#         volumeMounts:
+#         - name: nginx-server-certs
+#           mountPath: /etc/nginx-server-certs
+#           readOnly: true
+#         resources: {}
+#       volumes:
+#       - name: nginx-server-certs
+#         secret:
+#           secretName: unpaper-tls-frontend

@@ -1,0 +1,40 @@
+apiVersion: schemas.schemahero.io/v1alpha4
+kind: Table
+metadata:
+  name: follows
+spec:
+  database: unpaper
+  name: follows
+  schema:
+    postgres:
+      primaryKey:
+        - follower_user_id
+        - following_user_id
+      foreignKeys:
+        - columns:
+            - follower_user_id
+          references:
+            table: users
+            columns:
+              - id
+          onDelete: NO ACTION
+          name: users_follower_fkey
+        - columns:
+            - following_user_id
+          references:
+            table: users
+            columns:
+              - id
+          onDelete: NO ACTION
+          name: users_following_fkey
+      columns:
+        - name: follower_user_id
+          type: varchar(100)
+        - name: following_user_id
+          type: varchar(100)
+        - name: follow_date
+          type: timestamp with time zone
+          constraints:
+            notNull: true
+        - name: unfollow_date
+          type: timestamp with time zone

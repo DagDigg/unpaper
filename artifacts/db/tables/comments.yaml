@@ -1,0 +1,61 @@
+apiVersion: schemas.schemahero.io/v1alpha4
+kind: Table
+metadata:
+  name: comments
+spec:
+  database: unpaper
+  name: comments
+  schema:
+    postgres:
+      primaryKey:
+        - id
+      foreignKeys:
+        - columns:
+            - parent_id
+          references:
+            table: comments
+            columns:
+              - id
+          onDelete: NO ACTION
+          name: comments_parent_id_fkey
+      columns:
+        - name: likes
+          type: integer
+          constraints:
+            notNull: false
+          default: "0"
+        - name: audio
+          type: json
+          constraints:
+            notNull: true
+        - name: author
+          type: character varying(100)
+          constraints:
+            notNull: true
+        - name: parent_id
+          type: character varying(100)
+          constraints:
+            notNull: false
+        - name: post_id
+          type: character varying(100)
+          constraints:
+            notNull: true
+        - name: thread_type
+          type: character varying(100)
+          constraints:
+            notNull: true
+          default: none
+        - name: id
+          type: character varying(100)
+          constraints:
+            notNull: true
+        - name: thread_target_id
+          type: character varying(100)
+          constraints:
+            notNull: false
+        - name: message
+          type: character varying(100)
+          constraints:
+            notNull: false
+        - name: user_ids_who_likes
+          type: character varying(100)[]

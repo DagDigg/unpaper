@@ -1,0 +1,42 @@
+apiVersion: schemas.schemahero.io/v1alpha4
+kind: Table
+metadata:
+  name: customers
+spec:
+  database: unpaper
+  name: customers
+  schema:
+    postgres:
+      primaryKey:
+        - id
+      indexes:
+        - columns:
+            - customer_id
+          name: customers_customer_id_key
+          isUnique: true
+      columns:
+        - name: trial_used
+          type: boolean
+          constraints:
+            notNull: false
+          default: "false"
+        - name: id
+          type: character varying(100)
+          constraints:
+            notNull: true
+        - name: customer_id
+          type: character varying(100)
+          constraints:
+            notNull: true
+        - name: first_name
+          type: character varying(100)
+          constraints:
+            notNull: true
+        - name: last_name
+          type: character varying(100)
+          constraints:
+            notNull: true
+        - name: account_id
+          type: character varying(100)
+          constraints:
+            notNull: false

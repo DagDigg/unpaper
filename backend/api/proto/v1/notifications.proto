@@ -1,0 +1,39 @@
+syntax = "proto3";
+package v1;
+option go_package = "pkg/api/v1";
+
+import "google/protobuf/timestamp.proto";
+
+message Notification {
+  string id = 1;
+  google.protobuf.Timestamp date = 2;
+  string trigger_id = 3;
+  Event event = 4;
+  UserWhoFiredEvent user_who_fired_event = 5;
+  bool read = 6;
+  string content = 7;
+}
+message Event {
+  EventID.Enum id = 1;
+  string text = 2;
+}
+
+message EventID {
+  enum Enum {
+    LIKE_POST = 0;
+    LIKE_COMMENT = 1;
+    COMMENT = 2;
+    FOLLOW = 3;
+  }
+}
+
+message UserWhoFiredEvent {
+  string id = 1;
+  string username = 2;
+}
+
+message GetAllNotificationsRes { repeated Notification notifications = 1; }
+
+message ReadNotificationRequest { string notification_id = 1; }
+
+message ReadNotificationResponse { Notification notification = 1; }

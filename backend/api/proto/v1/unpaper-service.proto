@@ -1,0 +1,150 @@
+syntax = "proto3";
+package v1;
+option go_package = "pkg/api/v1";
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "protoc-gen-swagger/options/annotations.proto";
+import "api/proto/v1/payment.proto";
+import "api/proto/v1/auth.proto";
+import "api/proto/v1/chat.proto";
+import "api/proto/v1/posts.proto";
+import "api/proto/v1/notifications.proto";
+import "api/proto/v1/mixes.proto";
+
+// RPC service
+service UnpaperService {
+  // Ping
+  rpc Ping (PingRequest) returns (User) {
+    option (google.api.http) = {
+      get: "/h1/v1/Ping"
+    };
+  }
+
+  // Auth
+  rpc GoogleLogin (GoogleLoginRequest) returns (GoogleLoginResponse);
+  rpc GoogleCallback (GoogleCallbackRequest) returns (User);
+  rpc GoogleOneTap (google.protobuf.Empty) returns (User);
+
+  rpc EmailSignup (EmailSignupRequest) returns (User);
+  rpc EmailSignin (EmailSigninRequest) returns (User);
+  rpc EmailVerify (EmailVerifyRequest) returns (google.protobuf.Empty);
+  rpc EmailCheck (EmailCheckRequest) returns (google.protobuf.Empty);
+  rpc ChangePassword (ChangePasswordRequest) returns (google.protobuf.Empty);
+  rpc SendResetLink (SendResetLinkRequest) returns (google.protobuf.Empty);
+  rpc ResetPassword (ResetPasswordRequest) returns (google.protobuf.Empty);
+  rpc UpdateUsername (UpdateUsernameRequest) returns (User);
+  rpc SignOut (google.protobuf.Empty) returns (google.protobuf.Empty);
+
+  rpc SetUserOnline (google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc SetUserOffline (google.protobuf.Empty) returns (google.protobuf.Empty);
+  
+  rpc FollowUser (FollowUserRequest) returns (ExtUserInfoResponse);
+  rpc GetFollowers (GetFollowersRequest) returns (GetFollowersResponse);
+  rpc GetFollowing (GetFollowingRequest) returns (GetFollowingResponse);
+  rpc GetFollowingCount (GetFollowingCountRequest) returns (GetFollowingCountResponse);
+  rpc GetFollowersCount (GetFollowersCountRequest) returns (GetFollowersCountResponse);
+
+  // Info
+  rpc UserInfo (UserInfoRequest) returns (User);
+  rpc ExtUserInfo (ExtUserInfoRequest) returns (ExtUserInfoResponse);
+  rpc CustomerInfo (CustomerInfoRequest) returns (Customer);
+
+  // Stripe
+  rpc StripeWebhook (StripeWebhookRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/h1/v1/webhook:Stripe"
+      body: "raw"  // this mapping is key for this to work
+    };
+  };
+  rpc StripeConnectWebhook (StripeWebhookRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/h1/v1/webhook:Stripe:Connect"
+      body: "raw"  // this mapping is key for this to work
+    };
+  };
+  rpc SubscribeToPlan (SubscribeToPlanRequest) returns (Customer);
+  rpc RetryInvoice (RetryInvoiceRequest) returns (Invoice);
+  rpc GetSubscriptionByID (GetSubscriptionByIDRequest) returns (GetSubscriptionByIDResponse);
+  rpc CreateSetupIntent (CreateSetupIntentRequest) returns (CreateSetupIntentResponse);
+  rpc AttachPaymentMethod (AttachPaymentMethodRequest) returns (PaymentMethod);
+  rpc UpdateSubscription (UpdateSubscriptionRequest) returns (Customer);
+  rpc InvoicePreview (InvoicePreviewRequest) returns (Invoice);
+  rpc CouponCheck (CouponCheckRequest) returns (CouponCheckResponse);
+  rpc GetConnectAccountLink (google.protobuf.Empty) returns (GetConnectAccountLinkResponse);
+  rpc MakeDonation (MakeDonationRequest) returns (ConnectedPaymentIntentResponse);
+  rpc PayRoomEntrance (PayRoomEntranceRequest) returns (ConnectedPaymentIntentResponse);
+  rpc CreateStripeAccount (google.protobuf.Empty) returns (Customer);
+  rpc GetDashboardLink (google.protobuf.Empty) returns (GetDashboardLinkResponse);
+  rpc CheckRoomEntrancePI (CheckRoomEntrancePIRequest) returns (CheckRoomEntrancePIResponse);
+  rpc SubscribeToRoom (SubscribeToRoomRequest) returns (SubscribeToRoomResponse);
+  rpc GetRoomSubscriptions (google.protobuf.Empty) returns (GetRoomSubscriptionsResponse);
+  rpc ConfirmRoomSubscription (ConfirmRoomSubscriptionRequest) returns (ConfirmRoomSubscriptionResponse);
+  rpc RetryRoomSubscription (RetryRoomSubscriptionRequest) returns (ConnectedPaymentIntentResponse);
+  rpc GetRoomSubscriptionByRoomID (GetRoomSubscriptionByRoomIDRequest) returns (GetRoomSubscriptionByRoomIDResponse);
+  rpc GetOwnConnectedAccount (google.protobuf.Empty) returns (GetOwnConnectedAccountResponse);
+  
+  // Chat
+  rpc GetMessages (GetMessagesRequest) returns (GetMessagesResponse);
+  rpc ListenForMessages (ListenForMessagesRequest) returns (stream ChatMessage);
+  rpc SendMessage (SendMessageRequest) returns (google.protobuf.Empty);
+  rpc SendAward (SendAwardRequest) returns (google.protobuf.Empty);
+  rpc SendDonation (SendDonationRequest) returns (google.protobuf.Empty);
+  rpc SendAudio (SendAudioRequest) returns (google.protobuf.Empty);
+  rpc CreateList (CreateListRequest) returns (List);
+  rpc UpdateList (UpdateListRequest) returns (List);
+  rpc GetUserSuggestions (GetUserSuggestionsRequest) returns (GetUserSuggestionsResponse);
+  rpc GetAllLists (google.protobuf.Empty) returns (GetAllListsResponse);
+  rpc GetListByID (GetListByIDRequest) returns (List);
+  rpc RoomAccessCheck (RoomAccessCheckRequest) returns (RoomAccessCheckResponse);
+  rpc CreateConversation (CreateConversationRequest) returns (CreateConversationResponse);
+  rpc GetConversation (GetConversationRequest) returns (GetConversationResponse);
+  rpc GetConversations (GetConversationsRequest) returns (GetConversationsResponse);
+  rpc GetConversationWithParticipants (GetConversationWithParticipantsRequest) returns (GetConversationWithParticipantsResponse);
+  
+  // Notifications
+  rpc ListenForNotifications (google.protobuf.Empty) returns (stream Notification);
+  rpc GetAllNotifications (google.protobuf.Empty) returns (GetAllNotificationsRes);
+  rpc ReadNotification (ReadNotificationRequest) returns (ReadNotificationResponse);
+
+  // Mixes
+  rpc GetMixes (google.protobuf.Empty) returns (GetMixesRes);
+
+  // Posts
+  rpc CreatePost (CreatePostRequest) returns (CreatePostResponse);
+  rpc GetPost (GetPostRequest) returns (GetPostResponse);
+  rpc GetPosts (GetPostsRequest) returns (GetPostsResponse);
+  rpc CreateComment (CreateCommentRequest) returns (CreateCommentResponse);
+  rpc LikePost (LikePostRequest) returns (LikePostResponse);
+  rpc LikeComment (LikeCommentRequest) returns (LikeCommentResponse);
+}
+
+// Ping
+message PingRequest { string api = 1; }
+
+// Swagger
+option (grpc.gateway.protoc_gen_swagger.options.openapiv2_swagger) = {
+  info : {
+    title : "Unpaper API";
+    version : "1.0";
+      contact : {
+        name: "unpaper";
+        url: "https://github.com/DagDigg/unpaper";
+        email: "foo@bar.com";
+      };
+  };
+  schemes : HTTP;
+  consumes : "application/json";
+  produces : "application/json";
+  responses : {
+    key: "404";
+    value : {
+      description: "Returned when the resource does not exist.";
+      schema : {
+        json_schema : {
+          type: STRING;
+        }
+      }
+    }
+  }
+};

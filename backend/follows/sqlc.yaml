@@ -1,0 +1,11 @@
+version: "1"
+packages:
+  - name: "follows"
+    path: "."
+    queries: "queries.sql"
+    schema: "../../core/db/migrations"
+    engine: "postgresql"
+    emit_json_tags: false
+    emit_prepared_queries: false
+    emit_interface: true
+    emit_exact_table_names: false

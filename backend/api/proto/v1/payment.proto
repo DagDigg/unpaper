@@ -1,0 +1,275 @@
+syntax = "proto3";
+package v1;
+option go_package = "pkg/api/v1";
+
+// Webhook
+message StripeWebhookRequest { 
+  bytes raw = 1; 
+}
+
+// Customer
+message Customer {
+  string id = 1;
+  string customer_id = 2;
+  string first_name = 3;
+  string last_name = 4;
+  repeated Subscription subscriptions = 5;
+  PaymentMethod default_payment_method = 6;
+  string account_id = 7;
+}
+
+message CustomerInfoRequest {
+  string api = 1;
+}
+
+// Subscription
+message Subscription {
+  string id = 1;
+  string customer_id = 2;
+  int64 current_period_end = 3;
+  SubscriptionStatus status = 4;
+  Price price = 5;
+  Invoice latest_invoice = 6;
+  repeated SubscriptionItem items = 7;
+}
+
+message RoomSubscription {
+  string id = 1;
+  string customer_id = 2;
+  int64 current_period_end = 3;
+  SubscriptionStatus status = 4;
+  Invoice latest_invoice = 6;
+  string room_id = 8;
+  RoomSubcriptionType.Enum room_subscription_type = 9;
+}
+
+message RoomSubcriptionType {
+  enum Enum {
+    ONE_TIME = 0;
+    SUBSCRIPTION_MONTHLY = 1;
+  }
+}
+
+message GetRoomSubscriptionsResponse {
+  repeated RoomSubscription room_subscriptions = 1;
+}
+
+message ConfirmRoomSubscriptionRequest {
+  string room_id = 1;
+}
+
+message ConfirmRoomSubscriptionResponse {
+  RoomSubscription subscription = 1;
+}
+
+message GetRoomSubscriptionByRoomIDRequest {
+  string room_id = 1;
+}
+
+message GetRoomSubscriptionByRoomIDResponse {
+  RoomSubscription subscription = 1;
+}
+
+message RetryRoomSubscriptionRequest {
+  string room_id = 1;
+}
+
+message SubscriptionItem {
+  string id = 1;
+}
+
+message Price {
+  string id = 1;
+  bool active = 2;
+  Plan plan = 3;
+}
+
+enum SubscriptionStatus {
+  ACTIVE = 0;
+  INCOMPLETE = 1;
+  INCOMPLETE_EXPIRED = 2;
+  TRIALING = 3;
+  PAST_DUE = 4;
+  CANCELED = 5;
+  UNPAID = 6;
+}
+
+message SubscribeToPlanRequest {
+  Plan plan = 1;
+  string payment_method_id = 2;
+}
+
+message SubscribeToPlanResponse {
+  Subscription subscription = 1;
+  Invoice invoice = 2;
+}
+
+message GetSubscriptionByIDRequest {
+  string api = 1;
+  string subscription_id = 2;
+}
+
+message GetSubscriptionByIDResponse {
+  Subscription subscription = 1;
+}
+
+message UpdateSubscriptionRequest {
+  string api = 1;
+  string customer_id = 2;
+  Plan plan = 3;
+}
+
+enum Plan {
+  UNPAPER_FREE = 0;
+  UNPAPER_PLUS_MONTHLY = 1;
+  UNPAPER_PLUS_YEARLY = 2;
+}
+
+message PaymentIntent {
+  PaymentIntentStatus.Enum status = 1;
+  string client_secret = 2;
+  string id = 3;
+}
+
+message PaymentIntentStatus {
+  enum Enum {
+    REQUIRES_PAYMENT_METHOD = 0;
+    REQUIRES_CONFIRMATION = 1;
+    REQUIRES_ACTION = 2;
+    PROCESSING = 3;
+    REQUIRES_CAPTURE = 4;
+    CANCELED = 5;
+    SUCCEEDED = 6;
+  }
+}
+
+message Invoice {
+  string id = 1;
+  int64 amount_due = 2;
+  PaymentIntent payment_intent = 3;
+  Plan plan = 4;
+  int64 subtotal = 5;
+}
+
+message RetryInvoiceRequest {
+  string customer_id = 1;
+  string payment_method_id = 2;
+  string invoice_id = 3;
+}
+
+message InvoicePreviewRequest {
+  string api = 1;
+  Plan plan = 2;
+  string customer_id = 3;
+  string subscription_id = 4;
+  string subscription_item_id = 5;
+  string coupon = 6;
+}
+
+// SetupIntent 
+message CreateSetupIntentRequest {
+  string api = 1;
+}
+
+message CreateSetupIntentResponse {
+  string id = 1;
+  string client_secret = 2;
+}
+
+message AttachPaymentMethodRequest {
+  string api = 1;
+  string payment_method_id = 2;
+  string customer_id = 3;
+}
+
+message SetupIntentStatus {
+  enum Enum {
+    REQUIRES_PAYMENT_METHOD = 0;
+    REQUIRES_CONFIRMATION = 1;
+    REQUIRES_ACTION = 2;
+    PROCESSING = 3;
+    CANCELED = 4;
+    SUCCEEDED = 5;
+  }
+}
+
+// PaymentMethod
+message PaymentMethod {
+  string id = 1;
+  string user_id = 2;
+  string last_four = 3;
+  int32 exp_month = 4;
+  int32 exp_year = 5;
+  bool is_default = 6;
+}
+
+// Coupon
+message CouponCheckRequest {
+  string api = 1;
+  string id = 2;
+}
+
+message CouponCheckResponse {
+  bool valid = 1;
+}
+
+// Connect
+message GetConnectAccountLinkResponse {
+  string link = 1;
+}
+
+message GetDashboardLinkResponse {
+  string link = 2;
+}
+
+// Donations
+message MakeDonationRequest {
+  string receiver_user_id = 1;
+  int32 amount = 2;
+}
+
+// Pay2Join room
+message PayRoomEntranceRequest {
+  string room_id = 1;
+}
+
+message ConnectedPaymentIntentResponse {
+  PaymentIntent payment_intent = 1;
+  string account_id = 2;
+}
+
+message CheckRoomEntrancePIRequest {
+  string room_id = 1;
+}
+
+message CheckRoomEntrancePIResponse {
+  PaymentIntentStatus.Enum pi_status = 1;
+  bool pi_found = 2;
+}
+
+message SubscribeToRoomRequest {
+  string room_id = 1;
+}
+
+message SubscribeToRoomResponse {
+  RoomSubscription subscription = 1;
+  string account_id = 2;
+}
+
+message ConnectedCustomer {
+  string user_id = 1;
+  string customer_id = 2;
+  string connected_customer_id = 3;
+  string account_id = 4;
+}
+
+message ConnectedAccount {
+  string user_id = 1;
+  string customer_id = 2;
+  string account_id = 3;
+  bool can_receive_payments = 4;
+}
+
+message GetOwnConnectedAccountResponse {
+  bool can_receive_payments = 1;
+}

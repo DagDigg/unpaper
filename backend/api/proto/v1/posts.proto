@@ -1,0 +1,81 @@
+syntax = "proto3";
+package v1;
+option go_package = "pkg/api/v1";
+
+message Post {
+  string id = 1;
+  string message = 2;
+  string author = 3;
+  Audio audio = 4;
+  repeated Comment comments = 5;
+  bool has_already_liked = 6;
+  int32 likes = 7;
+}
+
+message Comment {
+  string id = 1;
+  string message = 2;
+  Audio audio = 3;
+  string author = 4;
+  string parent_id = 5;
+  int32 likes = 6;
+  string post_id = 7;
+  Thread thread = 8;
+  bool has_already_liked = 9;
+}
+
+message Audio {
+  string id = 1;
+  bytes bytes = 2;
+  string format = 3;
+  int32 duration_ms = 4;
+}
+
+message CreatePostRequest {
+  string message = 1;
+  bytes audio_bytes = 2;
+  int32 audio_duration_ms = 3;
+  string audio_format = 4;
+}
+message CreatePostResponse { Post post = 1; }
+
+message GetPostRequest { string post_id = 1; }
+message GetPostResponse { Post post = 1; }
+
+message GetPostsRequest { string category = 1; }
+message GetPostsResponse { repeated Post posts = 1; }
+
+message Thread {
+  ThreadType.Enum thread_type = 1;
+  string target_id = 2;
+  Comment comment = 3;
+}
+
+message ThreadType {
+  enum Enum {
+    POST = 0;
+    COMMENT = 1;
+    NONE = 2;
+  }
+}
+
+message ThreadRequest {
+  ThreadType.Enum thread_type = 1;
+  string target_id = 2;
+}
+
+message CreateCommentRequest {
+  string post_id = 1;
+  string message = 2;
+  bytes audio_bytes = 3;
+  int32 audio_duration_ms = 4;
+  string parent_id = 5;
+  ThreadRequest thread = 6;
+}
+message CreateCommentResponse { Comment comment = 1; }
+
+message LikePostRequest { string post_id = 1; }
+message LikePostResponse { Post post = 1; }
+
+message LikeCommentRequest { string comment_id = 2; }
+message LikeCommentResponse { Comment comment = 1; }

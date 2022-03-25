@@ -1,0 +1,1189 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Unpaper API",
+    "version": "1.0",
+    "contact": {
+      "name": "unpaper",
+      "url": "https://github.com/DagDigg/unpaper",
+      "email": "foo@bar.com"
+    }
+  },
+  "schemes": [
+    "http"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/h1/v1/Ping": {
+      "get": {
+        "summary": "Ping",
+        "operationId": "UnpaperService_Ping",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1User"
+            }
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "type": "string",
+              "format": "string"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/runtimeError"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "api",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "UnpaperService"
+        ]
+      }
+    },
+    "/h1/v1/webhook:Stripe": {
+      "post": {
+        "summary": "Stripe",
+        "operationId": "UnpaperService_StripeWebhook",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "properties": {}
+            }
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "type": "string",
+              "format": "string"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/runtimeError"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "byte"
+            }
+          }
+        ],
+        "tags": [
+          "UnpaperService"
+        ]
+      }
+    },
+    "/h1/v1/webhook:Stripe:Connect": {
+      "post": {
+        "operationId": "UnpaperService_StripeConnectWebhook",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "properties": {}
+            }
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "type": "string",
+              "format": "string"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/runtimeError"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "byte"
+            }
+          }
+        ],
+        "tags": [
+          "UnpaperService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "type_url": {
+          "type": "string",
+          "description": "A URL/resource name that uniquely identifies the type of the serialized\nprotocol buffer message. This string must contain at least\none \"/\" character. The last segment of the URL's path must represent\nthe fully qualified name of the type (as in\n`path/google.protobuf.Duration`). The name should be in a canonical form\n(e.g., leading \".\" is not accepted).\n\nIn practice, teams usually precompile into the binary all types that they\nexpect it to use in the context of Any. However, for URLs which use the\nscheme `http`, `https`, or no scheme, one can optionally set up a type\nserver that maps type URLs to message definitions as follows:\n\n* If no scheme is provided, `https` is assumed.\n* An HTTP GET on the URL must yield a [google.protobuf.Type][]\n  value in binary format, or produce an error.\n* Applications are allowed to cache lookup results based on the\n  URL, or have them precompiled into a binary to avoid any\n  lookup. Therefore, binary compatibility needs to be preserved\n  on changes to types. (Use versioned type names to manage\n  breaking changes.)\n\nNote: this functionality is not currently available in the official\nprotobuf release, and it is not used for type URLs beginning with\ntype.googleapis.com.\n\nSchemes other than `http`, `https` (or the empty scheme) might be\nused with implementation specific semantics."
+        },
+        "value": {
+          "type": "string",
+          "format": "byte",
+          "description": "Must be a valid serialized protocol buffer of the above specified type."
+        }
+      },
+      "description": "`Any` contains an arbitrary serialized protocol buffer message along with a\nURL that describes the type of the serialized message.\n\nProtobuf library provides support to pack/unpack Any values in the form\nof utility functions or additional generated methods of the Any type.\n\nExample 1: Pack and unpack a message in C++.\n\n    Foo foo = ...;\n    Any any;\n    any.PackFrom(foo);\n    ...\n    if (any.UnpackTo(\u0026foo)) {\n      ...\n    }\n\nExample 2: Pack and unpack a message in Java.\n\n    Foo foo = ...;\n    Any any = Any.pack(foo);\n    ...\n    if (any.is(Foo.class)) {\n      foo = any.unpack(Foo.class);\n    }\n\n Example 3: Pack and unpack a message in Python.\n\n    foo = Foo(...)\n    any = Any()\n    any.Pack(foo)\n    ...\n    if any.Is(Foo.DESCRIPTOR):\n      any.Unpack(foo)\n      ...\n\n Example 4: Pack and unpack a message in Go\n\n     foo := \u0026pb.Foo{...}\n     any, err := ptypes.MarshalAny(foo)\n     ...\n     foo := \u0026pb.Foo{}\n     if err := ptypes.UnmarshalAny(any, foo); err != nil {\n       ...\n     }\n\nThe pack methods provided by protobuf library will by default use\n'type.googleapis.com/full.type.name' as the type URL and the unpack\nmethods only use the fully qualified type name after the last '/'\nin the type URL, for example \"foo.bar.com/x/y.z\" will yield type\nname \"y.z\".\n\n\nJSON\n====\nThe JSON representation of an `Any` value uses the regular\nrepresentation of the deserialized, embedded message, with an\nadditional field `@type` which contains the type URL. Example:\n\n    package google.profile;\n    message Person {\n      string first_name = 1;\n      string last_name = 2;\n    }\n\n    {\n      \"@type\": \"type.googleapis.com/google.profile.Person\",\n      \"firstName\": \u003cstring\u003e,\n      \"lastName\": \u003cstring\u003e\n    }\n\nIf the embedded message type is well-known and has a custom JSON\nrepresentation, that representation will be embedded adding a field\n`value` which holds the custom JSON in addition to the `@type`\nfield. Example (for message [google.protobuf.Duration][]):\n\n    {\n      \"@type\": \"type.googleapis.com/google.protobuf.Duration\",\n      \"value\": \"1.212s\"\n    }"
+    },
+    "runtimeError": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "string"
+        },
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "runtimeStreamError": {
+      "type": "object",
+      "properties": {
+        "grpc_code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "http_code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "http_status": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "v1Audio": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "bytes": {
+          "type": "string",
+          "format": "byte"
+        },
+        "format": {
+          "type": "string"
+        },
+        "duration_ms": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "v1Background": {
+      "type": "object",
+      "properties": {
+        "fallback": {
+          "type": "string"
+        },
+        "background_image": {
+          "type": "string"
+        }
+      }
+    },
+    "v1ChatMessage": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "type": {
+          "$ref": "#/definitions/v1MessageTypeEnum"
+        },
+        "username": {
+          "type": "string"
+        },
+        "text": {
+          "$ref": "#/definitions/v1MessageText"
+        },
+        "award": {
+          "$ref": "#/definitions/v1MessageAward"
+        },
+        "donation": {
+          "$ref": "#/definitions/v1MessageDonation"
+        },
+        "audio": {
+          "$ref": "#/definitions/v1MessageAudio"
+        },
+        "id": {
+          "type": "string"
+        }
+      }
+    },
+    "v1CheckRoomEntrancePIResponse": {
+      "type": "object",
+      "properties": {
+        "pi_status": {
+          "$ref": "#/definitions/v1PaymentIntentStatusEnum"
+        },
+        "pi_found": {
+          "type": "boolean"
+        }
+      }
+    },
+    "v1Comment": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "audio": {
+          "$ref": "#/definitions/v1Audio"
+        },
+        "author": {
+          "type": "string"
+        },
+        "parent_id": {
+          "type": "string"
+        },
+        "likes": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "post_id": {
+          "type": "string"
+        },
+        "thread": {
+          "$ref": "#/definitions/v1Thread"
+        },
+        "has_already_liked": {
+          "type": "boolean"
+        }
+      }
+    },
+    "v1ConfirmRoomSubscriptionResponse": {
+      "type": "object",
+      "properties": {
+        "subscription": {
+          "$ref": "#/definitions/v1RoomSubscription"
+        }
+      }
+    },
+    "v1ConnectedPaymentIntentResponse": {
+      "type": "object",
+      "properties": {
+        "payment_intent": {
+          "$ref": "#/definitions/v1PaymentIntent"
+        },
+        "account_id": {
+          "type": "string"
+        }
+      }
+    },
+    "v1Conversation": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "participants": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/v1ConversationParticipant"
+          }
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "unread_messages_count": {
+          "type": "string",
+          "format": "int64"
+        },
+        "last_message": {
+          "$ref": "#/definitions/v1ChatMessage"
+        }
+      }
+    },
+    "v1ConversationParticipant": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "joined_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "v1CouponCheckResponse": {
+      "type": "object",
+      "properties": {
+        "valid": {
+          "type": "boolean"
+        }
+      }
+    },
+    "v1CreateCommentResponse": {
+      "type": "object",
+      "properties": {
+        "comment": {
+          "$ref": "#/definitions/v1Comment"
+        }
+      }
+    },
+    "v1CreateConversationResponse": {
+      "type": "object",
+      "properties": {
+        "conversation": {
+          "$ref": "#/definitions/v1Conversation"
+        }
+      }
+    },
+    "v1CreatePostResponse": {
+      "type": "object",
+      "properties": {
+        "post": {
+          "$ref": "#/definitions/v1Post"
+        }
+      }
+    },
+    "v1CreateSetupIntentResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "client_secret": {
+          "type": "string"
+        }
+      }
+    },
+    "v1Customer": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "customer_id": {
+          "type": "string"
+        },
+        "first_name": {
+          "type": "string"
+        },
+        "last_name": {
+          "type": "string"
+        },
+        "subscriptions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1Subscription"
+          }
+        },
+        "default_payment_method": {
+          "$ref": "#/definitions/v1PaymentMethod"
+        },
+        "account_id": {
+          "type": "string"
+        }
+      },
+      "title": "Customer"
+    },
+    "v1Event": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/definitions/v1EventIDEnum"
+        },
+        "text": {
+          "type": "string"
+        }
+      }
+    },
+    "v1EventIDEnum": {
+      "type": "string",
+      "enum": [
+        "LIKE_POST",
+        "LIKE_COMMENT",
+        "COMMENT",
+        "FOLLOW"
+      ],
+      "default": "LIKE_POST"
+    },
+    "v1ExtUserInfo": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "given_name": {
+          "type": "string"
+        },
+        "family_name": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "is_followed": {
+          "type": "boolean"
+        }
+      }
+    },
+    "v1ExtUserInfoResponse": {
+      "type": "object",
+      "properties": {
+        "user_info": {
+          "$ref": "#/definitions/v1ExtUserInfo"
+        }
+      }
+    },
+    "v1GetAllListsResponse": {
+      "type": "object",
+      "properties": {
+        "lists": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1List"
+          }
+        }
+      }
+    },
+    "v1GetAllNotificationsRes": {
+      "type": "object",
+      "properties": {
+        "notifications": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1Notification"
+          }
+        }
+      }
+    },
+    "v1GetConnectAccountLinkResponse": {
+      "type": "object",
+      "properties": {
+        "link": {
+          "type": "string"
+        }
+      },
+      "title": "Connect"
+    },
+    "v1GetConversationResponse": {
+      "type": "object",
+      "properties": {
+        "conversation": {
+          "$ref": "#/definitions/v1Conversation"
+        }
+      }
+    },
+    "v1GetConversationWithParticipantsResponse": {
+      "type": "object",
+      "properties": {
+        "conversation": {
+          "$ref": "#/definitions/v1Conversation"
+        },
+        "found": {
+          "type": "boolean"
+        }
+      }
+    },
+    "v1GetConversationsResponse": {
+      "type": "object",
+      "properties": {
+        "conversations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1Conversation"
+          }
+        }
+      }
+    },
+    "v1GetDashboardLinkResponse": {
+      "type": "object",
+      "properties": {
+        "link": {
+          "type": "string"
+        }
+      }
+    },
+    "v1GetFollowersCountResponse": {
+      "type": "object",
+      "properties": {
+        "followers_count": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "v1GetFollowersResponse": {
+      "type": "object",
+      "properties": {
+        "users": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1ExtUserInfo"
+          }
+        }
+      }
+    },
+    "v1GetFollowingCountResponse": {
+      "type": "object",
+      "properties": {
+        "following_count": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "v1GetFollowingResponse": {
+      "type": "object",
+      "properties": {
+        "users": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1ExtUserInfo"
+          }
+        }
+      }
+    },
+    "v1GetMessagesResponse": {
+      "type": "object",
+      "properties": {
+        "messages": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1ChatMessage"
+          }
+        },
+        "has_more": {
+          "type": "boolean"
+        }
+      }
+    },
+    "v1GetMixesRes": {
+      "type": "object",
+      "properties": {
+        "mixes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1Mix"
+          }
+        }
+      }
+    },
+    "v1GetOwnConnectedAccountResponse": {
+      "type": "object",
+      "properties": {
+        "can_receive_payments": {
+          "type": "boolean"
+        }
+      }
+    },
+    "v1GetPostResponse": {
+      "type": "object",
+      "properties": {
+        "post": {
+          "$ref": "#/definitions/v1Post"
+        }
+      }
+    },
+    "v1GetPostsResponse": {
+      "type": "object",
+      "properties": {
+        "posts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1Post"
+          }
+        }
+      }
+    },
+    "v1GetRoomSubscriptionByRoomIDResponse": {
+      "type": "object",
+      "properties": {
+        "subscription": {
+          "$ref": "#/definitions/v1RoomSubscription"
+        }
+      }
+    },
+    "v1GetRoomSubscriptionsResponse": {
+      "type": "object",
+      "properties": {
+        "room_subscriptions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1RoomSubscription"
+          }
+        }
+      }
+    },
+    "v1GetSubscriptionByIDResponse": {
+      "type": "object",
+      "properties": {
+        "subscription": {
+          "$ref": "#/definitions/v1Subscription"
+        }
+      }
+    },
+    "v1GetUserSuggestionsResponse": {
+      "type": "object",
+      "properties": {
+        "users": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1UserSuggestion"
+          }
+        }
+      }
+    },
+    "v1GoogleLoginResponse": {
+      "type": "object",
+      "properties": {
+        "api": {
+          "type": "string"
+        },
+        "consentURL": {
+          "type": "string"
+        },
+        "state": {
+          "type": "string"
+        }
+      }
+    },
+    "v1Invoice": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "amount_due": {
+          "type": "string",
+          "format": "int64"
+        },
+        "payment_intent": {
+          "$ref": "#/definitions/v1PaymentIntent"
+        },
+        "plan": {
+          "$ref": "#/definitions/v1Plan"
+        },
+        "subtotal": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "v1LikeCommentResponse": {
+      "type": "object",
+      "properties": {
+        "comment": {
+          "$ref": "#/definitions/v1Comment"
+        }
+      }
+    },
+    "v1LikePostResponse": {
+      "type": "object",
+      "properties": {
+        "post": {
+          "$ref": "#/definitions/v1Post"
+        }
+      }
+    },
+    "v1List": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "owner_user_id": {
+          "type": "string"
+        },
+        "allowed_users": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "v1MessageAudio": {
+      "type": "object",
+      "properties": {
+        "bytes": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
+    },
+    "v1MessageAward": {
+      "type": "object",
+      "properties": {
+        "award_id": {
+          "type": "string"
+        }
+      }
+    },
+    "v1MessageDonation": {
+      "type": "object",
+      "properties": {
+        "amount": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "v1MessageText": {
+      "type": "object",
+      "properties": {
+        "content": {
+          "type": "string"
+        }
+      }
+    },
+    "v1MessageTypeEnum": {
+      "type": "string",
+      "enum": [
+        "TEXT",
+        "AWARD",
+        "DONATION",
+        "AUDIO"
+      ],
+      "default": "TEXT"
+    },
+    "v1Mix": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "category": {
+          "type": "string"
+        },
+        "post_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "background": {
+          "$ref": "#/definitions/v1Background"
+        },
+        "requested_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "title": {
+          "type": "string"
+        }
+      }
+    },
+    "v1Notification": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "date": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "trigger_id": {
+          "type": "string"
+        },
+        "event": {
+          "$ref": "#/definitions/v1Event"
+        },
+        "user_who_fired_event": {
+          "$ref": "#/definitions/v1UserWhoFiredEvent"
+        },
+        "read": {
+          "type": "boolean"
+        },
+        "content": {
+          "type": "string"
+        }
+      }
+    },
+    "v1PaymentIntent": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/v1PaymentIntentStatusEnum"
+        },
+        "client_secret": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        }
+      }
+    },
+    "v1PaymentIntentStatusEnum": {
+      "type": "string",
+      "enum": [
+        "REQUIRES_PAYMENT_METHOD",
+        "REQUIRES_CONFIRMATION",
+        "REQUIRES_ACTION",
+        "PROCESSING",
+        "REQUIRES_CAPTURE",
+        "CANCELED",
+        "SUCCEEDED"
+      ],
+      "default": "REQUIRES_PAYMENT_METHOD"
+    },
+    "v1PaymentMethod": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "user_id": {
+          "type": "string"
+        },
+        "last_four": {
+          "type": "string"
+        },
+        "exp_month": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "exp_year": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "is_default": {
+          "type": "boolean"
+        }
+      },
+      "title": "PaymentMethod"
+    },
+    "v1Plan": {
+      "type": "string",
+      "enum": [
+        "UNPAPER_FREE",
+        "UNPAPER_PLUS_MONTHLY",
+        "UNPAPER_PLUS_YEARLY"
+      ],
+      "default": "UNPAPER_FREE"
+    },
+    "v1Post": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "author": {
+          "type": "string"
+        },
+        "audio": {
+          "$ref": "#/definitions/v1Audio"
+        },
+        "comments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1Comment"
+          }
+        },
+        "has_already_liked": {
+          "type": "boolean"
+        },
+        "likes": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "v1Price": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "active": {
+          "type": "boolean"
+        },
+        "plan": {
+          "$ref": "#/definitions/v1Plan"
+        }
+      }
+    },
+    "v1ReadNotificationResponse": {
+      "type": "object",
+      "properties": {
+        "notification": {
+          "$ref": "#/definitions/v1Notification"
+        }
+      }
+    },
+    "v1RoomAccessCheckResponse": {
+      "type": "object",
+      "properties": {
+        "authorization": {
+          "$ref": "#/definitions/v1RoomAuthorizationEnum"
+        }
+      }
+    },
+    "v1RoomAuthorizationEnum": {
+      "type": "string",
+      "enum": [
+        "AUTHORIZED",
+        "NEED_TO_PAY",
+        "UNJOINABLE",
+        "NEED_TO_SUBSCRIBE"
+      ],
+      "default": "AUTHORIZED"
+    },
+    "v1RoomSubcriptionTypeEnum": {
+      "type": "string",
+      "enum": [
+        "ONE_TIME",
+        "SUBSCRIPTION_MONTHLY"
+      ],
+      "default": "ONE_TIME"
+    },
+    "v1RoomSubscription": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "customer_id": {
+          "type": "string"
+        },
+        "current_period_end": {
+          "type": "string",
+          "format": "int64"
+        },
+        "status": {
+          "$ref": "#/definitions/v1SubscriptionStatus"
+        },
+        "latest_invoice": {
+          "$ref": "#/definitions/v1Invoice"
+        },
+        "room_id": {
+          "type": "string"
+        },
+        "room_subscription_type": {
+          "$ref": "#/definitions/v1RoomSubcriptionTypeEnum"
+        }
+      }
+    },
+    "v1SubscribeToRoomResponse": {
+      "type": "object",
+      "properties": {
+        "subscription": {
+          "$ref": "#/definitions/v1RoomSubscription"
+        },
+        "account_id": {
+          "type": "string"
+        }
+      }
+    },
+    "v1Subscription": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "customer_id": {
+          "type": "string"
+        },
+        "current_period_end": {
+          "type": "string",
+          "format": "int64"
+        },
+        "status": {
+          "$ref": "#/definitions/v1SubscriptionStatus"
+        },
+        "price": {
+          "$ref": "#/definitions/v1Price"
+        },
+        "latest_invoice": {
+          "$ref": "#/definitions/v1Invoice"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1SubscriptionItem"
+          }
+        }
+      },
+      "title": "Subscription"
+    },
+    "v1SubscriptionItem": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      }
+    },
+    "v1SubscriptionStatus": {
+      "type": "string",
+      "enum": [
+        "ACTIVE",
+        "INCOMPLETE",
+        "INCOMPLETE_EXPIRED",
+        "TRIALING",
+        "PAST_DUE",
+        "CANCELED",
+        "UNPAID"
+      ],
+      "default": "ACTIVE"
+    },
+    "v1Thread": {
+      "type": "object",
+      "properties": {
+        "thread_type": {
+          "$ref": "#/definitions/v1ThreadTypeEnum"
+        },
+        "target_id": {
+          "type": "string"
+        },
+        "comment": {
+          "$ref": "#/definitions/v1Comment"
+        }
+      }
+    },
+    "v1ThreadRequest": {
+      "type": "object",
+      "properties": {
+        "thread_type": {
+          "$ref": "#/definitions/v1ThreadTypeEnum"
+        },
+        "target_id": {
+          "type": "string"
+        }
+      }
+    },
+    "v1ThreadTypeEnum": {
+      "type": "string",
+      "enum": [
+        "POST",
+        "COMMENT",
+        "NONE"
+      ],
+      "default": "POST"
+    },
+    "v1User": {
+      "type": "object",
+      "properties": {
+        "api": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "given_name": {
+          "type": "string"
+        },
+        "family_name": {
+          "type": "string"
+        },
+        "email_verified": {
+          "type": "boolean"
+        },
+        "type": {
+          "$ref": "#/definitions/v1UserType"
+        },
+        "username": {
+          "type": "string"
+        }
+      }
+    },
+    "v1UserSuggestion": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        }
+      }
+    },
+    "v1UserType": {
+      "type": "string",
+      "enum": [
+        "MEMBER",
+        "CREATOR"
+      ],
+      "default": "MEMBER",
+      "title": "User"
+    },
+    "v1UserWhoFiredEvent": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,58 @@
+apiVersion: schemas.schemahero.io/v1alpha4
+kind: Table
+metadata:
+  name: room-subscriptions
+spec:
+  database: unpaper
+  name: room_subscriptions
+  schema:
+    postgres:
+      primaryKey:
+        - id
+      indexes:
+        - columns:
+            - user_id
+            - room_id
+          name: idx_user_id_room_id
+          isUnique: true
+      columns:
+        - name: latest_invoice
+          type: jsonb
+          constraints:
+            notNull: false
+        - name: current_period_end
+          type: timestamp with time zone
+          constraints:
+            notNull: false
+        - name: customer_id
+          type: character varying(100)
+          constraints:
+            notNull: true
+        - name: connected_customer_id
+          type: character varying(100)
+          constraints:
+            notNull: true
+        - name: account_id
+          type: character varying(100)
+          constraints:
+            notNull: true
+        - name: id
+          type: character varying(100)
+          constraints:
+            notNull: true
+        - name: status
+          type: character varying(100)
+          constraints:
+            notNull: true
+        - name: room_id
+          type: character varying(100)
+          constraints:
+            notNull: true
+        - name: room_subscription_type
+          type: character varying(100)
+          constraints:
+            notNull: true
+        - name: user_id
+          type: character varying(100)
+          constraints:
+            notNull: true

@@ -1,0 +1,102 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ext-authz
+  labels:
+    app: unpaper
+    tier: ext-authz
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: unpaper
+      tier: ext-authz
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      name: ext-authz
+      labels:
+        app: unpaper
+        tier: ext-authz
+    spec:
+      containers:
+        - image: extauth
+          name: extauth
+          imagePullPolicy: Never
+          ports:
+            - name: extauth
+              containerPort: 4000
+          envFrom:
+            - configMapRef:
+                name: env
+          command:
+            - "/go/bin/ext-auth/main"
+          resources: {}
+      restartPolicy: Always
+      volumes:
+        - name: envoy-config
+          configMap:
+            name: envoy-extauth-sidecar-config
+        # - name: certs
+        #   projected:
+        #     sources:
+        #     - configMap:
+        #         name: server-cert
+        #     - configMap:
+        #         name: server-key
+        #     - configMap:
+        #         name: ca-cert
+        - name: extauth-pv-claim
+          persistentVolumeClaim:
+            claimName: extauth-pv-claim
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ext-authz
+  labels:
+    app: unpaper
+    tier: ext-authz
+spec:
+  ports:
+    - name: grpc
+      port: 4000
+      targetPort: 4000
+      protocol: TCP
+  selector:
+    app: unpaper
+    tier: ext-authz
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    app: extauth 
+  name: extauth-pv-claim
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Mi
+status: {}
+---
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: ext-authz
+spec:
+  selector:
+    matchLabels:
+      app: unpaper
+      tier: backend
+  action: CUSTOM
+  provider:
+    # The provider name must match the extension provider defined in the mesh config.
+    name: ext-authz-grpc
+  rules:
+    - to:
+      - operation:
+          paths: ["/v1.UnpaperService/*"]

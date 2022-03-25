@@ -1,0 +1,82 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+  labels:
+    app: postgres
+spec:
+  selector:
+    matchLabels:
+      app: postgres
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+        - env:
+            - name: POSTGRES_DB
+              valueFrom:
+                configMapKeyRef:
+                  name: env
+                  key: POSTGRES_DB
+            - name: POSTGRES_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: env
+                  key: POSTGRES_HOST
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: postgres_password
+            - name: POSTGRES_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: env
+                  key: POSTGRES_PORT
+            - name: POSTGRES_USER
+              value: postgres
+          image: postgres:14.0
+          name: pg
+          ports:
+            - containerPort: 5432
+          resources: {}
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: pg-persistent-storage
+      volumes:
+        - name: pg-persistent-storage
+          persistentVolumeClaim:
+            claimName: pg-pv-claim
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  labels:
+    app: postgres
+spec:
+  clusterIP: None
+  ports:
+    - name: tcp
+      port: 5432
+  selector:
+    app: postgres
+status:
+  loadBalancer: {}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pg-pv-claim
+  labels:
+    app: postgres
+spec:
+  resources:
+    requests:
+      storage: 5Gi
+  accessModes:
+    - ReadWriteMany

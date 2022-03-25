@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  labels:
+    app: unpaper
+    tier: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: unpaper
+      tier: backend
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      name: backend
+      labels:
+        app: unpaper
+        tier: backend
+    spec:
+      containers:
+        - image: backend
+          name: backend
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5051
+          envFrom:
+            - configMapRef:
+                name: env
+          command:
+            - /go/src/backend/bin/main
+          resources: {}
+      restartPolicy: Always
+
+      volumes:
+        - name: unpaper-api-pv-claim
+          persistentVolumeClaim:
+            claimName: unpaper-api-pv-claim
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+  labels:
+    app: unpaper
+    tier: backend
+spec:
+  ports:
+    - name: grpc-web
+      port: 5051
+  selector:
+    app: unpaper
+    tier: backend
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    type: local
+  name: unpaper-api-pv-claim
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 500Mi
+status: {}
+---
+

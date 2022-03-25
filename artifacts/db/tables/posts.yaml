@@ -1,0 +1,40 @@
+apiVersion: schemas.schemahero.io/v1alpha4
+kind: Table
+metadata:
+  name: posts
+spec:
+  database: unpaper
+  name: posts
+  schema:
+    postgres:
+      primaryKey:
+        - id
+      columns:
+        - name: likes
+          type: integer
+          constraints:
+            notNull: false
+          default: "0"
+        - name: audio
+          type: json
+          constraints:
+            notNull: true
+        - name: id
+          type: character varying(100)
+          constraints:
+            notNull: true
+        - name: author
+          type: character varying(100)
+          constraints:
+            notNull: true
+        - name: message
+          type: character varying(100)
+          constraints:
+            notNull: true
+        - name: user_ids_who_likes
+          type: "character varying(100)[]"
+          constraints:
+            notNull: true
+          default: "{}"
+        - name: created_at
+          type: timestamp with time zone

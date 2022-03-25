@@ -1,0 +1,34 @@
+apiVersion: schemas.schemahero.io/v1alpha4
+kind: Table
+metadata:
+  name: connected-accounts
+spec:
+  database: unpaper
+  name: connected_accounts
+  schema:
+    postgres:
+      primaryKey:
+        - account_id
+      indexes:
+        - columns:
+            - user_id
+          name: connected_accounts_user_id_key
+          isUnique: true
+      columns:
+        - name: can_receive_payments
+          type: boolean
+          constraints:
+            notNull: true
+          default: "false"
+        - name: user_id
+          type: character varying(100)
+          constraints:
+            notNull: true
+        - name: customer_id
+          type: character varying(100)
+          constraints:
+            notNull: true
+        - name: account_id
+          type: character varying(100)
+          constraints:
+            notNull: true

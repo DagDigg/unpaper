@@ -1,0 +1,106 @@
+syntax = "proto3";
+package v1;
+option go_package = "pkg/api/v1";
+
+message GoogleLoginRequest { string api = 1; }
+message GoogleLoginResponse {
+  string api = 1;
+  string consentURL = 2;
+  string state = 3;
+}
+
+message GoogleCallbackRequest { string api = 1; }
+
+message EmailSignupRequest {
+  string api = 1;
+  string username = 2;
+  string email = 3;
+  string password = 4;
+}
+
+message EmailSigninRequest {
+  string api = 1;
+  string email = 2;
+  string password = 3;
+}
+
+message EmailVerifyRequest { string verification_token = 1; }
+
+message ChangePasswordRequest {
+  string old_password = 1;
+  string new_password = 2;
+  string repeat = 3;
+}
+
+message UserInfoRequest { string api = 1; }
+
+message EmailCheckRequest {
+  string api = 1;
+  string email = 2;
+}
+
+message SendResetLinkRequest { string email = 1; }
+
+message ResetPasswordRequest {
+  string verification_token = 1;
+  string new_password = 2;
+  string repeat = 3;
+}
+
+// User
+enum UserType {
+  MEMBER = 0;
+  CREATOR = 1;
+}
+
+message User {
+  string api = 1;
+  string id = 2;
+  string email = 3;
+  string given_name = 4;
+  string family_name = 5;
+  bool email_verified = 6;
+  UserType type = 7;
+  string username = 8;
+}
+
+message UpdateUsernameRequest { string username = 1; }
+
+message ExtUserInfoRequest {
+  string user_id = 1;
+  string username = 2;
+}
+
+message ExtUserInfo {
+  string id = 1;
+  string email = 2;
+  string given_name = 3;
+  string family_name = 4;
+  string username = 5;
+  bool is_followed = 6;
+}
+message CustomerInfo {
+  bool has_connected_account = 1;
+  string account_id = 2;
+};
+
+message ExtUserInfoResponse { ExtUserInfo user_info = 1; }
+
+message ExtUserCustomerInfoResponse {
+  ExtUserInfo user_info = 1;
+  CustomerInfo customer_info = 2;
+}
+
+message FollowUserRequest { string user_id_to_follow = 1; }
+
+message GetFollowingRequest { string user_id = 1; }
+message GetFollowingResponse { repeated ExtUserInfo users = 1; }
+
+message GetFollowersRequest { string user_id = 1; }
+message GetFollowersResponse { repeated ExtUserInfo users = 1; }
+
+message GetFollowersCountRequest { string user_id = 1; }
+message GetFollowersCountResponse { int64 followers_count = 1; }
+
+message GetFollowingCountRequest { string user_id = 1; }
+message GetFollowingCountResponse { int64 following_count = 1; }

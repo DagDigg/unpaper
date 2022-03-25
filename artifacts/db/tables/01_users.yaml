@@ -1,0 +1,63 @@
+apiVersion: schemas.schemahero.io/v1alpha4
+kind: Table
+metadata:
+  name: users
+spec:
+  database: unpaper
+  name: users
+  schema:
+    postgres:
+      primaryKey:
+        - id
+      indexes:
+        - columns:
+            - id
+            - username
+          name: users_id_username_idx
+        - columns:
+            - username
+          name: idx_lower_unique_username
+          isUnique: true
+        - columns:
+            - email
+          name: idx_lower_unique_email
+          isUnique: true
+      columns:
+        - name: email_verified
+          type: boolean
+          constraints:
+            notNull: false
+          default: "false"
+        - name: password_changed_at
+          type: timestamp with time zone
+          constraints:
+            notNull: false
+        - name: email
+          type: character varying(100)
+          constraints:
+            notNull: true
+        - name: password
+          type: character varying(100)
+          constraints:
+            notNull: false
+        - name: id
+          type: character varying(100)
+          constraints:
+            notNull: true
+        - name: family_name
+          type: character varying(100)
+          constraints:
+            notNull: false
+        - name: type
+          type: character varying(100)
+          constraints:
+            notNull: true
+          default: member
+        - name: given_name
+          type: character varying(100)
+          constraints:
+            notNull: false
+        - name: username
+          type: character varying(100)
+          constraints:
+            notNull: false

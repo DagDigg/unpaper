@@ -1,0 +1,41 @@
+apiVersion: schemas.schemahero.io/v1alpha4
+kind: Table
+metadata:
+  name: stripe-subscriptions
+spec:
+  database: unpaper
+  name: stripe_subscriptions
+  schema:
+    postgres:
+      primaryKey:
+        - id
+      indexes:
+        - columns:
+            - customer_id
+          name: stripe_subscriptions_customer_id_key
+          isUnique: true
+      columns:
+        - name: current_period_end
+          type: timestamp with time zone
+          constraints:
+            notNull: true
+        - name: latest_invoice
+          type: jsonb
+          constraints:
+            notNull: false
+        - name: id
+          type: character varying(100)
+          constraints:
+            notNull: true
+        - name: user_id
+          type: character varying(100)
+          constraints:
+            notNull: true
+        - name: customer_id
+          type: character varying(100)
+          constraints:
+            notNull: true
+        - name: status
+          type: character varying(100)
+          constraints:
+            notNull: true

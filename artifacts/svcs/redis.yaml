@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: unpaper
+    tier: redis
+  name: redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: unpaper
+      tier: redis
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: unpaper
+        tier: redis
+    spec:
+      containers:
+        - name: redis
+          image: redis:alpine
+          args:
+            - redis-server
+          ports:
+            - containerPort: 6379
+          resources: {}
+          volumeMounts:
+            - mountPath: /data
+              name: redis-persistent-storage
+          env:
+            - name: REDIS_PASS
+              valueFrom:
+                secretKeyRef:
+                  key: redis_pass
+                  name: secrets
+      restartPolicy: Always
+      volumes:
+        - name: redis-persistent-storage
+          persistentVolumeClaim:
+            claimName: redis-pv-claim
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: unpaper
+    tier: redis
+  name: redis
+spec:
+  ports:
+    - name: tcp
+      port: 6379
+      targetPort: 6379
+  selector:
+    app: unpaper
+    tier: redis
+status:
+  loadBalancer: {}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: redis-pv-claim
+  labels:
+    app: unpaper
+spec:
+  resources:
+    requests:
+      storage: 5Gi
+  accessModes:
+    - ReadWriteMany

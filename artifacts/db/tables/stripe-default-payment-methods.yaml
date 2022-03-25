@@ -1,0 +1,51 @@
+apiVersion: schemas.schemahero.io/v1alpha4
+kind: Table
+metadata:
+  name: stripe-default-payment-methods
+spec:
+  database: unpaper
+  name: stripe_default_payment_methods
+  schema:
+    postgres:
+      primaryKey:
+        - customer_id
+      indexes:
+        - columns:
+            - id
+          name: stripe_default_payment_methods_id_key
+          isUnique: true
+        - columns:
+            - id
+            - customer_id
+          name: idx_id_customer_id
+          isUnique: true
+      columns:
+        - name: exp_month
+          type: integer
+          constraints:
+            notNull: true
+        - name: exp_year
+          type: integer
+          constraints:
+            notNull: true
+        - name: is_default
+          type: boolean
+          constraints:
+            notNull: false
+          default: "true"
+        - name: id
+          type: character varying(100)
+          constraints:
+            notNull: true
+        - name: last_four
+          type: character varying(4)
+          constraints:
+            notNull: true
+        - name: user_id
+          type: character varying(100)
+          constraints:
+            notNull: true
+        - name: customer_id
+          type: character varying(100)
+          constraints:
+            notNull: true

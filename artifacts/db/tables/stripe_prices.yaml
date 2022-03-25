@@ -1,0 +1,34 @@
+apiVersion: schemas.schemahero.io/v1alpha4
+kind: Table
+metadata:
+  name: stripe-prices
+spec:
+  database: unpaper
+  name: stripe_prices
+  schema:
+    postgres:
+      primaryKey:
+        - customer_id
+      columns:
+        - name: customer_id
+          type: character varying(100)
+          constraints:
+            notNull: true
+        - name: id
+          type: character varying(100)
+          constraints:
+            notNull: true
+        - name: user_id
+          type: character varying(100)
+          constraints:
+            notNull: true
+        - name: plan
+          type: character varying(100)
+          constraints:
+            notNull: true
+          default: "free"
+        - name: active
+          type: boolean
+          constraints:
+            notNull: true
+          default: "true"

@@ -1,0 +1,64 @@
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: stripe-webhook
+#   labels:
+#     app: unpaper
+#     tier: stripe-webhook
+# spec:
+#   replicas: 1
+#   selector:
+#     matchLabels:
+#       app: unpaper
+#       tier: stripe-webhook
+#   strategy: {}
+#   template:
+#     metadata:
+#       annotations:
+#         kompose.cmd: kompose convert -f docker-compose-resolved.yaml -o artifacts
+#         kompose.version: 1.23.0 (HEAD)
+#       labels:
+#         app: unpaper
+#         tier: stripe-webhook
+#     spec:
+#       containers:
+#       - name: stripe-cli
+#         image: stripe/stripe-cli
+#         args:
+#           - listen
+#           - --skip-verify
+#           - --api-key
+#           - $(STRIPE_API_KEY)
+#           - --forward-to
+#           - https://host.docker.internal:10000/h1/v1/webhook:Stripe
+#           - --forward-connect-to
+#           - https://host.docker.internal:10000/h1/v1/webhook:Stripe:Connect
+#         ports:
+#           - containerPort: 8080
+#         env:
+#           - name: STRIPE_API_KEY
+#             valueFrom:
+#               secretKeyRef:
+#                 key: stripe_api_key
+#                 name: secrets
+#         resources: {}
+#       restartPolicy: Always
+# status: {}
+# ---
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   labels:
+#     app: unpaper
+#     tier: stripe-webhook
+#   name: stripe-webhook
+# spec:
+#   ports:
+#     - name: http
+#       port: 8080
+#       targetPort: 8080
+#   selector:
+#     app: unpaper
+#     tier: stripe-webhook
+# status:
+#   loadBalancer: {}

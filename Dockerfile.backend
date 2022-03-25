@@ -1,0 +1,11 @@
+FROM golang:1.16.7 as build-env
+WORKDIR /go/src/core
+COPY ./core .
+
+WORKDIR /go/src/backend
+COPY ./backend .
+
+# <- Second step to build minimal image
+FROM alpine
+COPY --from=build-env /go/src/backend /go/src/backend
+COPY --from=build-env /go/src/core /go/src/core

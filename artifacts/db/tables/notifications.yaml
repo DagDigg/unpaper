@@ -1,0 +1,41 @@
+apiVersion: schemas.schemahero.io/v1alpha4
+kind: Table
+metadata:
+  name: notifications
+spec:
+  database: unpaper
+  name: notifications
+  schema:
+    postgres:
+      primaryKey:
+        - id
+      columns:
+        - name: id
+          type: character varying(100)
+          constraints:
+            notNull: true
+        - name: user_id_to_notify
+          type: character varying(100)
+          constraints:
+            notNull: true
+        - name: user_id_who_fired_event
+          type: character varying(100)
+          constraints:
+            notNull: true
+        - name: date
+          type: timestamp with time zone
+          constraints:
+            notNull: true
+        - name: read
+          type: boolean
+          constraints:
+            notNull: true
+          default: "false"
+        - name: trigger_id
+          type: character varying(100)
+        - name: event_id
+          type: character varying(100)
+          constraints:
+            notNull: true
+        - name: content
+          type: character varying(100)

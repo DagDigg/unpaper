@@ -1,0 +1,14 @@
+*.env*
+
+backend/bin
+core/bin
+extauth/main
+artifacts/secrets*.yaml
+
+certificate/*.pem
+certificate/*.srl
+certificate/*.cnf
+artifacts/certificates
+artifacts/tls.yaml
+tmp*
+.DS_Store

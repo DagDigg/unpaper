@@ -1,0 +1,22 @@
+{
+  "folders": [
+    {
+      "path": "."
+    }
+  ],
+  "settings": {
+    "protoc": {
+      "options": [
+        "--proto_path=/Users/dagdigg/unpaper/backend/api/proto/v1"
+      ]
+    },
+    "[go]": {
+      "editor.tabSize": 4
+    },
+    "go.installDependenciesWhenBuilding": false,
+    "go.useLanguageServer": true,
+    "go.lintOnSave": "file",
+    "go.vetOnSave": "workspace",
+    "go.formatTool": "goimports"
+  }
+}

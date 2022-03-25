@@ -1,0 +1,28 @@
+apiVersion: schemas.schemahero.io/v1alpha4
+kind: Table
+metadata:
+  name: lists
+spec:
+  database: unpaper
+  name: lists
+  schema:
+    postgres:
+      primaryKey:
+        - id
+      columns:
+        - name: allowed_users
+          type: json
+          constraints:
+            notNull: false
+        - name: id
+          type: text
+          constraints:
+            notNull: true
+        - name: name
+          type: character varying(100)
+          constraints:
+            notNull: true
+        - name: owner_user_id
+          type: text
+          constraints:
+            notNull: true

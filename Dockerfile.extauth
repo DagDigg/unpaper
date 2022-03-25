@@ -1,0 +1,9 @@
+FROM golang:1.16.7 as build-env
+WORKDIR /go/src/core
+COPY ./core .
+
+WORKDIR /go/src/ext-auth
+COPY ./extauth .
+
+FROM scratch
+COPY --from=build-env /go/src/ext-auth/bin/main /go/bin/ext-auth/main

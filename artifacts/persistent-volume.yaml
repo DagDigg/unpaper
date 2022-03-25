@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: persistent-volume
+  labels:
+    type: local
+    app: unpaper
+spec:
+  persistentVolumeReclaimPolicy: Recycle
+  storageClassName: manual
+  accessModes:
+    - ReadWriteMany
+  capacity:
+    storage: 10Gi
+  hostPath:
+    path: /mnt/data

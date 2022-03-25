@@ -1,0 +1,134 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: gateway
+spec:
+  selector:
+    istio: ingressgateway # use istio default ingress gateway
+  servers:
+    - port:
+        number: 443
+        name: https
+        protocol: HTTPS
+      tls:
+        mode: PASSTHROUGH
+      hosts:
+        - "unpaper.io"
+    # for ACME
+    # - port:
+    #     number: 80
+    #     name: http
+    #     protocol: HTTP2
+    #   tls:
+    #     httpsRedirect: true
+    #   hosts:
+    #     - "*"
+    - port:
+        number: 8443
+        name: https-backend
+        protocol: HTTPS
+      tls:
+        mode: SIMPLE
+        credentialName: unpaper-tls-backend # must be the same as secret
+      hosts:
+        - "api.unpaper.io"
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: virtualservice
+spec:
+  hosts:
+    - "api.unpaper.io"
+  gateways:
+    - gateway
+  http:
+    - match:
+        - uri:
+            prefix: "/v1.UnpaperService"
+        - uri:
+            exact: "/grpc.reflection.v1alpha.ServerReflection/ServerReflectionInfo" # server reflection
+      route:
+        - destination:
+            host: backend
+            port:
+              number: 5051
+      corsPolicy:
+        allowOrigins:
+          - exact: "*"
+        allowMethods:
+          - POST
+          - GET
+          - OPTIONS
+          - PUT
+          - DELETE
+        allowHeaders:
+          - grpc-timeout
+          - content-type
+          - keep-alive
+          - user-agent
+          - cache-control
+          - content-type
+          - content-transfer-encoding
+          - x-accept-content-transfer-encoding
+          - x-accept-response-streaming
+          - x-user-agent
+          - x-grpc-web
+          - x-code
+          - x-google-client-id
+          - x-google-id-token
+        maxAge: 1728s
+        exposeHeaders:
+          - custom-header-1
+          - grpc-status
+          - grpc-message
+        allowCredentials: true
+---
+# apiVersion: networking.istio.io/v1alpha3
+# kind: VirtualService
+# metadata:
+#   name: virtualservice-frontend
+# spec:
+#   hosts:
+#   - "unpaper.io"
+#   gateways:
+#   - gateway
+#   tls:
+#   - match:
+#     - port: 443
+#       sniHosts:
+#         - unpaper.io
+#     route:
+#       - destination:
+#           host: frontend
+#           port:
+#             number: 443
+#   http:
+#   - match:
+#     - uri:
+#         prefix: /.well-known/acme-challenge
+#     route:
+#       - destination:
+#           host: frontend
+#           port:
+#             number: 443
+# ---
+# apiVersion: networking.istio.io/v1alpha3
+# kind: DestinationRule
+# metadata:
+#   name: cert-htt01-challenge
+#   namespace: istio-system
+# spec:
+#   host: "*.istio-system.svc.cluster.local"
+#   trafficPolicy:
+#     tls:
+#       # keeping the same mTLS mode as  `default` DestinationRule in istio-system
+#       mode: DISABLE
+#     portLevelSettings:
+#     - port:
+#         # CertManager generate services to perform the challenge on port 8089
+#         # it looks so far no other services in istio-system use this port
+#         number: 8089
+#       tls:
+#         mode: DISABLE
+# ---

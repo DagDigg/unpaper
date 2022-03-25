@@ -1,0 +1,12 @@
+resources:
+  - ./customers.yaml
+  - ./stripe-subscriptions.yaml
+  - ./room-subscriptions.yaml
+  - ./connected-customers.yaml
+  - ./connected-accounts.yaml
+  - ./stripe-default-payment-methods.yaml
+  - ./rooms.yaml
+  - ./lists.yaml
+  - ./comments.yaml
+  - ./posts.yaml
+  - ./users.yaml
